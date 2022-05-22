@@ -206,10 +206,6 @@ def snip_copy_button():
 
 snip_copy_button()
 
-def okay(self):
-    if self == self:
-        print('yes')
-
 def scan():
     fle = filedialog.askopenfilename(initialdir = 'C:/gui/', title = 'Open File', filetypes = (('text files', '*.txt'), ('HTML Files', '*html'), ('Python files', '*,py'), ('All files', '*.*')))
     text = pytesseract.image_to_string(fle)
