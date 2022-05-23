@@ -15,7 +15,7 @@ from tkinter import filedialog
 
 root = Tk()
 root.title('Snip OCR tool')
-root.geometry('451x175')
+root.geometry('451x190')
 canvas = Canvas(root, width = 451, height = 238, highlightthickness = 0)
 canvas.grid(columnspan = 100, rowspan = 100)
 root.resizable(False, False)
@@ -27,10 +27,41 @@ fcolor = '#666666'
 bcolor = '#ffffff'
 
 frame = LabelFrame(root, text = 'Information box', padx = 80, pady = 15)
-frame.place(x = 20, y = 90)
+frame.place(x = 20, y = 105)
 
 feedback = Label(frame, text = 'Thanks for using SnipOCR. Made by Blou, 2022')
 feedback.pack()
+
+def settings():
+    print('pee pee')
+
+settings_btn = Button(root, width = 70, height = 1, text = 'Settings', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+fg = bcolor,
+bg = fcolor,
+border = 0,
+activeforeground = fcolor,
+activebackground = bcolor,
+command = settings)
+
+def settingsbutton():
+    def on_enter(e):
+        settings_btn['background'] = bcolor
+        settings_btn['foreground'] = fcolor
+
+    def on_leave(e):
+        if w.get() == 0:
+            settings_btn['background'] = fcolor
+            settings_btn['foreground'] = bcolor
+        if w.get() == 1:
+            settings_btn['background'] = 'ededed'
+            settings_btn['foreground'] = '#303030'
+
+    settings_btn.bind('<Enter>', on_enter)
+    settings_btn.bind('<Leave>', on_leave)
+
+    settings_btn.place(x = 10, y = 5)
+
+settingsbutton()
 
 def snip():
     class Sniptool(QtWidgets.QWidget):
@@ -115,7 +146,7 @@ def snipbutton():
     snip_btn.bind('<Enter>', on_enter)
     snip_btn.bind('<Leave>', on_leave)
 
-    snip_btn.place(x = 10, y = 10)
+    snip_btn.place(x = 10, y = 30)
 
 snipbutton()
 
@@ -202,7 +233,7 @@ def snip_copy_button():
     snip_copy_btn.bind('<Enter>', on_enter)
     snip_copy_btn.bind('<Leave>', on_leave)
 
-    snip_copy_btn.place(x = 160, y = 10)
+    snip_copy_btn.place(x = 160, y = 30)
 
 snip_copy_button()
 
@@ -244,7 +275,7 @@ def scan_button():
     scan_btn.bind('<Enter>', on_enter)
     scan_btn.bind('<Leave>', on_leave)
 
-    scan_btn.place(x = 311, y = 10)
+    scan_btn.place(x = 311, y = 30)
 
 scan_button()
 
