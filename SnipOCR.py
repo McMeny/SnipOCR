@@ -106,10 +106,6 @@ def snip():
             img_array = np.array(img)
             img = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
 
-            print(Image, Image.fromarray)
-
-            img = PhotoImage(image = Image.fromarray(img_array))
-            print('yu')
             cap_img = cv2.imshow('Captured', img)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
