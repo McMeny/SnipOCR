@@ -1,7 +1,3 @@
-
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
 import cv2
 from tkinter import *
 from PIL import ImageGrab, Image, ImageTk
@@ -15,7 +11,7 @@ from tkinter import filedialog
 
 root = Tk()
 root.title('Snip OCR tool')
-root.geometry('451x190')
+root.geometry('451x60')
 canvas = Canvas(root, width = 451, height = 238, highlightthickness = 0)
 canvas.grid(columnspan = 100, rowspan = 100)
 root.resizable(False, False)
@@ -26,45 +22,9 @@ w.set(0)
 fcolor = '#666666'
 bcolor = '#ffffff'
 
-frame = LabelFrame(root, text = 'Information box', padx = 80, pady = 15)
-frame.place(x = 20, y = 105)
-
-feedback = Label(frame, text = 'Thanks for using SnipOCR. Made by Blou, 2022')
-feedback.pack()
-
-def settings():
-    print('pee pee')
-
-settings_btn = Button(root, width = 70, height = 1, text = 'Settings', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
-fg = bcolor,
-bg = fcolor,
-border = 0,
-activeforeground = fcolor,
-activebackground = bcolor,
-command = settings)
-
-def settingsbutton():
-    def on_enter(e):
-        settings_btn['background'] = bcolor
-        settings_btn['foreground'] = fcolor
-
-    def on_leave(e):
-        if w.get() == 0:
-            settings_btn['background'] = fcolor
-            settings_btn['foreground'] = bcolor
-        if w.get() == 1:
-            settings_btn['background'] = 'ededed'
-            settings_btn['foreground'] = '#303030'
-
-    settings_btn.bind('<Enter>', on_enter)
-    settings_btn.bind('<Leave>', on_leave)
-
-    settings_btn.place(x = 10, y = 5)
-
-settingsbutton()
-
-def snip():
-    class Sniptool(QtWidgets.QWidget):
+def snip_mech():
+    from PyQt5 import QtCore, QtGui, QtWidgets
+    class Snip_copytool(QtWidgets.QWidget):
         def __init__(self):
             super().__init__()
             screen_width = root.winfo_screenwidth()
@@ -102,22 +62,26 @@ def snip():
             y1 = min(self.begin.y(), self.end.y())
             x2 = max(self.begin.x(), self.end.x())
             y2 = max(self.begin.y(), self.end.y())
+
             img = ImageGrab.grab(bbox = (x1, y1, x2, y2))
             img_array = np.array(img)
             img = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
 
-            cap_img = cv2.imshow('Captured', img)
+            cv2.imshow('Captured', img)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
 
     if __name__ == '__main__':
         app = QtWidgets.QApplication(sys.argv)
-        window = Sniptool()
+        window = Snip_copytool()
         window.show()
         app.aboutToQuit.connect(app.deleteLater)
         sys.exit(app.exec_())
 
-snip_btn = Button(root, width = 20, height = 5, text = 'Snip', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+def snip():
+    snip_mech()
+
+snip_btn = Button(root, width = 10, height = 2, text = 'Snip', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
 fg = bcolor,
 bg = fcolor,
 border = 0,
@@ -142,11 +106,12 @@ def snipbutton():
     snip_btn.bind('<Enter>', on_enter)
     snip_btn.bind('<Leave>', on_leave)
 
-    snip_btn.place(x = 10, y = 30)
+    snip_btn.place(x = 10, y = 10)
 
 snipbutton()
 
 def snip_copy():
+    from PyQt5 import QtCore, QtGui, QtWidgets
     class Snip_copytool(QtWidgets.QWidget):
         def __init__(self):
             super().__init__()
@@ -205,7 +170,7 @@ def snip_copy():
         app.aboutToQuit.connect(app.deleteLater)
         sys.exit(app.exec_())
 
-snip_copy_btn = Button(root, width = 20, height = 5, text = 'Snip & Copy Text', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+snip_copy_btn = Button(root, width = 15, height = 2, text = 'Snip & Copy Text', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
 fg = bcolor,
 bg = fcolor,
 border = 0,
@@ -229,7 +194,7 @@ def snip_copy_button():
     snip_copy_btn.bind('<Enter>', on_enter)
     snip_copy_btn.bind('<Leave>', on_leave)
 
-    snip_copy_btn.place(x = 160, y = 30)
+    snip_copy_btn.place(x = 80, y = 10)
 
 snip_copy_button()
 
@@ -247,7 +212,7 @@ def scan():
     ok_btn = Button(pop_up, text = 'Ok', command = pop_up.destroy)
     ok_btn.place(x = 80, y = 30)
 
-scan_btn = Button(root, width = 20, height = 5, text = 'Convert image to text', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+scan_btn = Button(root, width = 20, height = 2, text = 'Convert image to text', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
 fg = bcolor,
 bg = fcolor,
 border = 0,
@@ -271,8 +236,52 @@ def scan_button():
     scan_btn.bind('<Enter>', on_enter)
     scan_btn.bind('<Leave>', on_leave)
 
-    scan_btn.place(x = 311, y = 30)
+    scan_btn.place(x = 180, y = 10)
 
 scan_button()
+
+#construction of the settings window
+
+def settings():
+    print('settings')
+    class Window(QWindow):
+        def __init__(self):
+            __init__(self)
+            self.setTitle('Window')
+            self.resize(400, 300)
+
+    app = QApplication(sys.argv)
+    screen = Window()
+    screen.show()
+
+    sys.exit(app.exec_())
+
+settings_btn = Button(root, width = 10, height = 2, text = 'Settings', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+fg = bcolor,
+bg = fcolor,
+border = 0,
+activeforeground = fcolor,
+activebackground = bcolor,
+command = settings)
+
+def settings_button():
+    def on_enter(e):
+        settings_btn['background'] = bcolor
+        settings_btn['foreground'] = fcolor
+
+    def on_leave(e):
+        if w.get() == 0:
+            settings_btn['background'] = fcolor
+            settings_btn['foreground'] = bcolor
+        if w.get() == 1:
+            settings_btn['background'] = 'ededed'
+            settings_btn['foreground'] = '#303030'
+
+    settings_btn.bind('<Enter>', on_enter)
+    settings_btn.bind('<Leave>', on_leave)
+
+    settings_btn.place(x = 310, y = 10)
+
+settings_button()
 
 mainloop()
