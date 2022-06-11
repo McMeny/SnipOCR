@@ -8,10 +8,12 @@ import pytesseract
 pytesseract.pytesseract.tesseract_cmd = r"C:\Users\minua\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
 import pyperclip as pc
 from tkinter import filedialog
+from PyQt6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QTextEdit, QVBoxLayout
+from PyQt6.QtGui import QIcon
 
 root = Tk()
 root.title('Snip OCR tool')
-root.geometry('451x60')
+root.geometry('400x55')
 canvas = Canvas(root, width = 451, height = 238, highlightthickness = 0)
 canvas.grid(columnspan = 100, rowspan = 100)
 root.resizable(False, False)
@@ -244,17 +246,19 @@ scan_button()
 
 def settings():
     print('settings')
-    class Window(QWindow):
+    class Settings(QWidget):
         def __init__(self):
-            __init__(self)
-            self.setTitle('Window')
-            self.resize(400, 300)
-
+            super().__init__()
     app = QApplication(sys.argv)
-    screen = Window()
-    screen.show()
 
-    sys.exit(app.exec_())
+    window = Settings()
+    window.resize(400,400)
+    window.show()
+
+
+    sys.exit(app.exec())
+
+
 
 settings_btn = Button(root, width = 10, height = 2, text = 'Settings', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
 fg = bcolor,
