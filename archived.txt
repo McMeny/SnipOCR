@@ -1,0 +1,28 @@
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    window = Snip_copytool()
+    window.show()
+    app.aboutToQuit.connect(app.deleteLater)
+    sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    window = Snip_copytool()
+    window.show()
+    app.aboutToQuit.connect(app.deleteLater)
+    sys.exit(app.exec_())
+
+  class scan_doc(QtWidgets.QWidget):
+      fle = filedialog.askopenfilename(initialdir = 'C:/gui/', title = 'Open File', filetypes = (('text files', '*.txt'), ('HTML Files', '*html'), ('Python files', '*,py'), ('All files', '*.*')))
+      text = pytesseract.image_to_string(fle)
+      print(text)
+      pc.copy(text)
+      pop_up = Toplevel(root)
+      pop_up.geometry('200x60')
+      pop_up.resizable(False, False)
+      pop_up.title('Notification')
+      popup_label = Label(pop_up, text = 'Text copied to clipboard!', font = font.Font(family = 'MS Shell Dlg 2', size = 8))
+      popup_label.place(x = 40, y = 10)
+      ok_btn = Button(pop_up, text = 'Ok', command = pop_up.destroy)
+      ok_btn.place(x = 80, y = 30)
+      print('no')

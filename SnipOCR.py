@@ -11,14 +11,13 @@ from tkinter import filedialog
 from PyQt6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QTextEdit, QVBoxLayout
 from PyQt6.QtGui import QIcon
 from os.path import basename
+from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QPoint, Qt, QRect
 from PyQt5.QtWidgets import QAction, QMainWindow, QApplication, QPushButton, QMenu, QFileDialog
 from PyQt5.QtGui import QPixmap, QImage, QPainter, QPen
 
-
-def snip_mech():
-    from PyQt5 import QtCore, QtGui, QtWidgets
-    class Snip_copytool(QtWidgets.QWidget):
+def Snip():
+    class Snip_tool(QtWidgets.QWidget):
         def __init__(self):
             super().__init__()
             screen_width = root.winfo_screenwidth()
@@ -65,71 +64,67 @@ def snip_mech():
             cv2.waitKey(0)
             cv2.destroyAllWindows()
 
-    if __name__ == '__main__':
-        app = QtWidgets.QApplication(sys.argv)
-        window = Snip_copytool()
-        window.show()
-        app.aboutToQuit.connect(app.deleteLater)
-        sys.exit(app.exec_())
+        if __name__ == '__main__':
+            app = QtWidgets.QApplication(sys.argv)
+            window = Snip_tool()
+            window.show()
+            app.aboutToQuit.connect(app.deleteLater)
+            sys.exit(app.exec_())
 
-def snip():
-    snip_mech()
+#---------------------------------------------------------------
+class Snip_copytool(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        screen_width = root.winfo_screenwidth()
+        screen_height = root.winfo_screenheight()
+        self.setGeometry(0,0, screen_width, screen_height)
+        self.begin = QtCore.QPoint()
+        self.end = QtCore.QPoint()
+        self.setWindowOpacity(0.4)
+        QtWidgets.QApplication.setOverrideCursor(
+        QtGui.QCursor(QtCore.Qt.CrossCursor)
+        )
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.show()
+        root.withdraw()
 
-def snip_copy():
-    from PyQt5 import QtCore, QtGui, QtWidgets
-    class Snip_copytool(QtWidgets.QWidget):
-        def __init__(self):
-            super().__init__()
-            screen_width = root.winfo_screenwidth()
-            screen_height = root.winfo_screenheight()
-            self.setGeometry(0,0, screen_width, screen_height)
-            self.begin = QtCore.QPoint()
-            self.end = QtCore.QPoint()
-            self.setWindowOpacity(0.4)
-            QtWidgets.QApplication.setOverrideCursor(
-            QtGui.QCursor(QtCore.Qt.CrossCursor)
-            )
-            self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-            self.show()
-            root.withdraw()
+    def paintEvent(self, event):
+        qp = QtGui.QPainter(self)
+        qp.setPen(QtGui.QPen(QtGui.QColor('red'), 2))
+        qp.setBrush(QtGui.QColor(126, 126, 200, 0))
+        qp.drawRect(QtCore.QRect(self.begin, self.end))
 
-        def paintEvent(self, event):
-            qp = QtGui.QPainter(self)
-            qp.setPen(QtGui.QPen(QtGui.QColor('red'), 2))
-            qp.setBrush(QtGui.QColor(126, 126, 200, 0))
-            qp.drawRect(QtCore.QRect(self.begin, self.end))
+    def mousePressEvent(self, event):
+        self.begin = event.pos()
+        self.end = self.begin
+        self.update()
 
-        def mousePressEvent(self, event):
-            self.begin = event.pos()
-            self.end = self.begin
-            self.update()
+    def mouseMoveEvent(self, event):
+        self.end = event.pos()
+        self.update()
 
-        def mouseMoveEvent(self, event):
-            self.end = event.pos()
-            self.update()
+    def mouseReleaseEvent(self, event):
+        self.close()
 
-        def mouseReleaseEvent(self, event):
-            self.close()
+        x1 = min(self.begin.x(), self.end.x())
+        y1 = min(self.begin.y(), self.end.y())
+        x2 = max(self.begin.x(), self.end.x())
+        y2 = max(self.begin.y(), self.end.y())
 
-            x1 = min(self.begin.x(), self.end.x())
-            y1 = min(self.begin.y(), self.end.y())
-            x2 = max(self.begin.x(), self.end.x())
-            y2 = max(self.begin.y(), self.end.y())
+        img = ImageGrab.grab(bbox = (x1, y1, x2, y2))
+        img_array = np.array(img)
+        img = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
 
-            img = ImageGrab.grab(bbox = (x1, y1, x2, y2))
-            img_array = np.array(img)
-            img = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
+        text = pytesseract.image_to_string(img)
+        pc.copy(text)
+        print(text)
 
-            text = pytesseract.image_to_string(img)
-            pc.copy(text)
-            print(text)
-
-            if numpy_image is not None and snip_number is not None:
-                self.image = self.convert_numpy_img_to_qpixmap(numpy_image)
-                self.change_and_set_title("Snip #{0}".format(snip_number))
-            else:
-                self.image = QPixmap("background.PNG")
-                self.change_and_set_title(Menu.default_title)
+        if numpy_image is not None and snip_number is not None:
+            self.image = self.convert_numpy_img_to_qpixmap(numpy_image)
+            self.change_and_set_title("Snip #{0}".format(snip_number))
+        else:
+            self.image = QPixmap("background.PNG")
+            self.change_and_set_title(Menu.default_title)
 
     if __name__ == '__main__':
         app = QtWidgets.QApplication(sys.argv)
@@ -138,136 +133,18 @@ def snip_copy():
         app.aboutToQuit.connect(app.deleteLater)
         sys.exit(app.exec_())
 
-def scan():
-    fle = filedialog.askopenfilename(initialdir = 'C:/gui/', title = 'Open File', filetypes = (('text files', '*.txt'), ('HTML Files', '*html'), ('Python files', '*,py'), ('All files', '*.*')))
-    text = pytesseract.image_to_string(fle)
-    print(text)
-    pc.copy(text)
-    pop_up = Toplevel(root)
-    pop_up.geometry('200x60')
-    pop_up.resizable(False, False)
-    pop_up.title('Notification')
-    popup_label = Label(pop_up, text = 'Text copied to clipboard!', font = font.Font(family = 'MS Shell Dlg 2', size = 8))
-    popup_label.place(x = 40, y = 10)
-    ok_btn = Button(pop_up, text = 'Ok', command = pop_up.destroy)
-    ok_btn.place(x = 80, y = 30)
-    print('no')
+#-----------------------------------------------------------------------------------------------
+class scan_upload(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        print('testing')
+        fle = filedialog.askopenfilename(initialdir = 'C:/gui/', title = 'Open File', filetypes = (('text files', '*.txt'), ('HTML Files', '*html'), ('Python files', '*,py'), ('All files', '*.*')))
+        text = pytesseract.image_to_string(fle)
+        pc.copy(text)
 
-#construction of the settings window
-def scan_to_search():
-    print('scan_to_search')
 
-class Menu(QMainWindow):
-    snip_btn = Button(root, width = 10, height = 2, text = 'Snip', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
-    fg = bcolor,
-    bg = fcolor,
-    border = 0,
-    activeforeground = fcolor,
-    activebackground = bcolor,
-    command = snip)
-
-    def snipbutton():
-        def on_enter(e):
-            snip_btn['background'] = bcolor
-            snip_btn['foreground'] = fcolor
-
-        def on_leave(e):
-            if w.get() == 0:
-                snip_btn['background'] = fcolor
-                snip_btn['foreground'] = bcolor
-            if w.get() == 1:
-                snip_btn['background'] = 'ededed'
-                snip_btn['foreground'] = '#303030'
-
-        snip_btn.bind('<Enter>', on_enter)
-        snip_btn.bind('<Leave>', on_leave)
-
-        snip_btn.place(x = 10, y = 10)
-
-    snipbutton()
-
-    snip_copy_btn = Button(root, width = 15, height = 2, text = 'Snip & Copy Text', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
-    fg = bcolor,
-    bg = fcolor,
-    border = 0,
-    activeforeground = fcolor,
-    activebackground = bcolor,
-    command = snip_copy)
-
-    def snip_copy_button():
-        def on_enter(e):
-            snip_copy_btn['background'] = bcolor
-            snip_copy_btn['foreground'] = fcolor
-
-        def on_leave(e):
-            if w.get() == 0:
-                snip_copy_btn['background'] = fcolor
-                snip_copy_btn['foreground'] = bcolor
-            if w.get() == 1:
-                snip_copy_btn['background'] = 'ededed'
-                snip_copy_btn['foreground'] = '#303030'
-
-        snip_copy_btn.bind('<Enter>', on_enter)
-        snip_copy_btn.bind('<Leave>', on_leave)
-
-        snip_copy_btn.place(x = 80, y = 10)
-
-    snip_copy_button()
-
-    scan_btn = Button(root, width = 20, height = 2, text = 'Convert image to text', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
-    fg = bcolor,
-    bg = fcolor,
-    border = 0,
-    activeforeground = fcolor,
-    activebackground = bcolor,
-    command = scan)
-
-    def scan_button():
-        def on_enter(e):
-            scan_btn['background'] = bcolor
-            scan_btn['foreground'] = fcolor
-
-        def on_leave(e):
-            if w.get() == 0:
-                scan_btn['background'] = fcolor
-                scan_btn['foreground'] = bcolor
-            if w.get() == 1:
-                scan_btn['background'] = 'ededed'
-                scan_btn['foreground'] = '#303030'
-
-        scan_btn.bind('<Enter>', on_enter)
-        scan_btn.bind('<Leave>', on_leave)
-
-        scan_btn.place(x = 180, y = 10)
-
-    scan_button()
-
-    scan_to_search_btn = Button(root, width = 13, height = 2, text = 'Snip and search', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
-    fg = bcolor,
-    bg = fcolor,
-    border = 0,
-    activeforeground = fcolor,
-    activebackground = bcolor,
-    command = scan_to_search)
-
-    def scan_search_button():
-        def on_enter(e):
-            scan_to_search_btn['background'] = bcolor
-            scan_to_search_btn['foreground'] = fcolor
-
-        def on_leave(e):
-            if w.get() == 0:
-                scan_to_search_btn['background'] = fcolor
-                scan_to_search_btn['foreground'] = bcolor
-            if w.get() == 1:
-                scan_to_search_btn['background'] = 'ededed'
-                scan_to_search_btn['foreground'] = '#303030'
-
-        scan_to_search_btn.bind('<Enter>', on_enter)
-        scan_to_search_btn.bind('<Leave>', on_leave)
-
-        scan_to_search_btn.place(x = 310, y = 10)
-
-    scan_search_button()
-
-mainloop()
+#-----------------------------------------------------------------------------------------------
+class scan_to_search(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        print('scan_to_search')
