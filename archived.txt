@@ -26,3 +26,23 @@ if __name__ == '__main__':
       ok_btn = Button(pop_up, text = 'Ok', command = pop_up.destroy)
       ok_btn.place(x = 80, y = 30)
       print('no')
+
+  -------------------------------------------------------------------------------------
+from PyQt5 import QtWidgets
+import sys
+class Window(QtWidgets.QDialog):
+
+    def __init__(self):
+        super().__init__()
+        self.layout = QtWidgets.QHBoxLayout(self)
+
+        self.btn1 = QtWidgets.QPushButton('Button 1')
+        self.layout.addWidget(self.btn1)
+
+        self.btn2 = QtWidgets.QPushButton('Button 2')
+        self.layout.addWidget(self.btn2)
+
+app = QtWidgets.QApplication(sys.argv)
+win = Window()
+win.show()
+sys.exit(app.exec())
