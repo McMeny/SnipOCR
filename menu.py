@@ -25,8 +25,6 @@ def main():
     fcolor = '#666666'
     bcolor = '#ffffff'
 
-    Snip()
-    
     snip_btn = Button(root, width = 10, height = 2, text = 'Snip', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
     fg = bcolor,
     bg = fcolor,
