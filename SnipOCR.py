@@ -8,21 +8,20 @@ import pytesseract
 pytesseract.pytesseract.tesseract_cmd = r"C:\Users\minua\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
 import pyperclip as pc
 from tkinter import filedialog
-from PyQt6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QTextEdit, QVBoxLayout
-from PyQt6.QtGui import QIcon
-from os.path import basename
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QPoint, Qt, QRect
 from PyQt5.QtWidgets import QAction, QMainWindow, QApplication, QPushButton, QMenu, QFileDialog
 from PyQt5.QtGui import QPixmap, QImage, QPainter, QPen
 
+app = QApplication(sys.argv)
 
 class Snip_tool(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
-        screen_width = root.winfo_screenwidth()
-        screen_height = root.winfo_screenheight()
-        self.setGeometry(0,0, screen_width, screen_height)
+        screen = app.primaryScreen()
+        size = screen.size()
+        rect = screen.availableGeometry()
+        screen.setGeometry(0,0, rect.width(), rect.height())
         self.begin = QtCore.QPoint()
         self.end = QtCore.QPoint()
         self.setWindowOpacity(0.4)
@@ -31,7 +30,8 @@ class Snip_tool(QtWidgets.QWidget):
         )
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.show()
-        root.withdraw()
+        self.withdraw()
+
 
     def paintEvent(self, event):
         qp = QtGui.QPainter(self)
@@ -64,12 +64,12 @@ class Snip_tool(QtWidgets.QWidget):
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-    if __name__ == '__main__':
-        app = QtWidgets.QApplication(sys.argv)
-        window = Snip_tool()
-        window.show()
-        app.aboutToQuit.connect(app.deleteLater)
-        sys.exit(app.exec_())
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    window = Snip_tool()
+    window.show()
+    app.aboutToQuit.connect(app.deleteLater)
+    sys.exit(app.exec_())
 
 #---------------------------------------------------------------
 class Snip_copytool(Snip_tool):
@@ -80,19 +80,19 @@ class Snip_copytool(Snip_tool):
         pc.copy(text)
         print(text)
 
-    if __name__ == '__main__':
-        app = QtWidgets.QApplication(sys.argv)
-        window = Snip_copytool()
-        window.show()
-        app.aboutToQuit.connect(app.deleteLater)
-        sys.exit(app.exec_())
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    window = Snip_copytool()
+    window.show()
+    app.aboutToQuit.connect(app.deleteLater)
+    sys.exit(app.exec_())
 
 #-----------------------------------------------------------------------------------------------
-class scan_upload(QtWidgets.QWidget):
-    print('testing')
-    fle = filedialog.askopenfilename(initialdir = 'C:/gui/', title = 'Open File', filetypes = (('text files', '*.txt'), ('HTML Files', '*html'), ('Python files', '*,py'), ('All files', '*.*')))
-    text = pytesseract.image_to_string(fle)
-    pc.copy(text)
+#class scan_upload(QtWidgets.QWidget):
+#    print('testing')
+#    fle = filedialog.askopenfilename(initialdir = 'C:/gui/', title = 'Open File', filetypes = (('text files', '*.txt'), ('HTML Files', '*html'), ('Python files', '*,py'), ('All files', '*.*')))
+#    text = pytesseract.image_to_string(fle)
+#    pc.copy(text)
 
 
 #-----------------------------------------------------------------------------------------------

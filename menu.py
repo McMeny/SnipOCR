@@ -1,33 +1,33 @@
 import sys
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from SnipOCR import *
+from PyQt5.QtCore import QPoint, Qt, QRect
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QMainWindow
+from PyQt5.QtGui import QImage
+import SnipOCR
 
+app = QApplication(sys.argv)
 
-class Window():
-    app = QApplication(sys.argv)
-    window = QMainWindow()
-    window.setGeometry(0 ,0 , 450, 70)
-    window.setWindowTitle('SnipOCR')
+class Window(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setGeometry(0 ,0 , 450, 70)
+        self.setWindowTitle('SnipOCR')
 
-    layout = QHBoxLayout()
-    snip_btn = QPushButton(window)
-    snip_btn.move(10, 10)
-    snip_btn.setText('Snip')
-    snip_btn.resize(80,50)
-    layout.addWidget(snip_btn)
-    snip = Snip_tool()
-    snip_btn.clicked(snip)
+        layout = QHBoxLayout()
+        snip_btn = QPushButton(self)
+        snip_btn.move(10, 10)
+        snip_btn.setText('Snip')
+        snip_btn.resize(80,50)
+        layout.addWidget(snip_btn)
+        snip_btn.clicked.connect(SnipOCR.Snip_tool)
 
-    #snipcopy_btn = QPushButton(window)
-    #snipcopy_btn.move(110, 10)
-    #snipcopy_btn.setText('Snip and Copy Text')
-    #snipcopy_btn.resize(130,50)
-    #layout.addWidget(snipcopy_btn)
-    window.show()
-    #closes the application with the 'x' button
-    sys.exit(app.exec_())
+        #snipcopy_btn = QPushButton(window)
+        #snipcopy_btn.move(110, 10)
+        #snipcopy_btn.setText('Snip and Copy Text')
+        #snipcopy_btn.resize(130,50)
+        #layout.addWidget(snipcopy_btn)
+        self.show()
+        #closes the application with the 'x' button
+        sys.exit(app.exec_())
 
 if __name__ == '__main__':
     Window()

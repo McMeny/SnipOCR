@@ -26,8 +26,7 @@ if __name__ == '__main__':
       ok_btn = Button(pop_up, text = 'Ok', command = pop_up.destroy)
       ok_btn.place(x = 80, y = 30)
       print('no')
-
-  -------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
 from PyQt5 import QtWidgets
 import sys
 class Window(QtWidgets.QDialog):
@@ -541,3 +540,90 @@ class scan_to_search(QtWidgets.QWidget):
          else:
              self.image = QPixmap("background.PNG")
              self.change_and_set_title(Menu.default_title)
+---------------------------------------------------------------------------------
+import sys
+from PyQt5.QtCore import QPoint, Qt, QRect
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QMainWindow
+from PyQt5.QtGui import QImage
+import SnipOCR
+
+app = QApplication(sys.argv)
+
+class Window(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setGeometry(0 ,0 , 450, 70)
+        self.setWindowTitle('SnipOCR')
+
+        layout = QHBoxLayout()
+        snip_btn = QPushButton(self)
+        snip_btn.move(10, 10)
+        snip_btn.setText('Snip')
+        snip_btn.resize(80,50)
+        layout.addWidget(snip_btn)
+        snip_btn.clicked.connect(SnipOCR.Snip_tool)
+
+        #snipcopy_btn = QPushButton(window)
+        #snipcopy_btn.move(110, 10)
+        #snipcopy_btn.setText('Snip and Copy Text')
+        #snipcopy_btn.resize(130,50)
+        #layout.addWidget(snipcopy_btn)
+        self.show()
+        #closes the application with the 'x' button
+        sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    Window()
+    ---------------------------------------------------------------------------------
+    screen = app.primaryScreen()
+        print('Screen: %s' % screen.name())
+        size = screen.size()
+        print('Size: %d x %d' % (size.width(), size.height()))
+        rect = screen.availableGeometry()
+        print('Available: %d x %d' % (rect.width(), rect.height()))
+
+        self.height = rect.height()
+        self.width = rect.width()
+---------------------------------------------------------------------------------
+from tkinter import *
+import SnipOCR
+import tkinter.font as font
+
+root = Tk()
+root.geometry('451x151')
+root.title('SnipOCR')
+
+w = IntVar()
+w.set(0)
+fcolor = '#666666'
+bcolor = '#ffffff'
+
+snip_btn = Button(root, width = 10, height = 2, text = 'Snip', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+fg = bcolor,
+bg = fcolor,
+border = 0,
+activeforeground = fcolor,
+activebackground = bcolor,
+command = SnipOCR.Snip_tool)
+
+def snipbutton():
+    def on_enter(e):
+        snip_btn['background'] = bcolor
+        snip_btn['foreground'] = fcolor
+
+    def on_leave(e):
+        if w.get() == 0:
+            snip_btn['background'] = fcolor
+            snip_btn['foreground'] = bcolor
+        if w.get() == 1:
+            snip_btn['background'] = 'ededed'
+            snip_btn['foreground'] = '#303030'
+
+    snip_btn.bind('<Enter>', on_enter)
+    snip_btn.bind('<Leave>', on_leave)
+
+    snip_btn.place(x = 10, y = 10)
+
+snipbutton()
+
+mainloop()
