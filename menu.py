@@ -18,7 +18,6 @@ class Window(QMainWindow):
         snip_btn.setText('Snip')
         snip_btn.resize(80,50)
         layout.addWidget(snip_btn)
-        print('hello')
         snip_btn.clicked.connect(SnipOCR.Snip_tool)
 
         #snipcopy_btn = QPushButton(window)
