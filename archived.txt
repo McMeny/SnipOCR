@@ -1,0 +1,663 @@
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    window = Snip_copytool()
+    window.show()
+    app.aboutToQuit.connect(app.deleteLater)
+    sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    window = Snip_copytool()
+    window.show()
+    app.aboutToQuit.connect(app.deleteLater)
+    sys.exit(app.exec_())
+
+  class scan_doc(QtWidgets.QWidget):
+      fle = filedialog.askopenfilename(initialdir = 'C:/gui/', title = 'Open File', filetypes = (('text files', '*.txt'), ('HTML Files', '*html'), ('Python files', '*,py'), ('All files', '*.*')))
+      text = pytesseract.image_to_string(fle)
+      print(text)
+      pc.copy(text)
+      pop_up = Toplevel(root)
+      pop_up.geometry('200x60')
+      pop_up.resizable(False, False)
+      pop_up.title('Notification')
+      popup_label = Label(pop_up, text = 'Text copied to clipboard!', font = font.Font(family = 'MS Shell Dlg 2', size = 8))
+      popup_label.place(x = 40, y = 10)
+      ok_btn = Button(pop_up, text = 'Ok', command = pop_up.destroy)
+      ok_btn.place(x = 80, y = 30)
+      print('no')
+-------------------------------------------------------------------------------------
+from PyQt5 import QtWidgets
+import sys
+class Window(QtWidgets.QDialog):
+
+    def __init__(self):
+        super().__init__()
+        self.layout = QtWidgets.QHBoxLayout(self)
+
+        self.btn1 = QtWidgets.QPushButton('Button 1')
+        self.layout.addWidget(self.btn1)
+
+        self.btn2 = QtWidgets.QPushButton('Button 2')
+        self.layout.addWidget(self.btn2)
+
+app = QtWidgets.QApplication(sys.argv)
+win = Window()
+win.show()
+sys.exit(app.exec())
+---------------------------------------------------------------------------------
+from tkinter import *
+from SnipOCR import Snip, Snip_copytool, scan_upload, scan_to_search
+from PIL import ImageGrab, Image, ImageTk
+import tkinter.font as font
+from tkinter import filedialog
+from PyQt6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QTextEdit, QVBoxLayout
+from PyQt6.QtGui import QIcon
+from os.path import basename
+from PyQt5.QtCore import QPoint, Qt, QRect
+from PyQt5.QtWidgets import QAction, QMainWindow, QApplication, QPushButton, QMenu, QFileDialog
+from PyQt5.QtGui import QPixmap, QImage, QPainter, QPen
+
+def main():
+    root = Tk()
+    w = IntVar()
+    w.set(0)
+    photo = PhotoImage(file = 'snipocrlogo.png')
+    root.iconphoto(False, photo)
+    root.title('SnipOCR')
+    root.geometry('400x55')
+    canvas = Canvas(root, width = 451, height = 238, highlightthickness = 0)
+    canvas.grid(columnspan = 100, rowspan = 100)
+    root.resizable(False, False)
+
+    fcolor = '#666666'
+    bcolor = '#ffffff'
+
+    snip_btn = Button(root, width = 10, height = 2, text = 'Snip', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+    fg = bcolor,
+    bg = fcolor,
+    border = 0,
+    activeforeground = fcolor,
+    activebackground = bcolor,
+    command = Snip())
+
+    def snipbutton():
+        def on_enter(e):
+            snip_btn['background'] = bcolor
+            snip_btn['foreground'] = fcolor
+
+        def on_leave(e):
+            if w.get() == 0:
+                snip_btn['background'] = fcolor
+                snip_btn['foreground'] = bcolor
+            if w.get() == 1:
+                snip_btn['background'] = 'ededed'
+                snip_btn['foreground'] = '#303030'
+
+        snip_btn.bind('<Enter>', on_enter)
+        snip_btn.bind('<Leave>', on_leave)
+
+        snip_btn.place(x = 10, y = 10)
+
+    snipbutton()
+
+    snip_copy_btn = Button(root, width = 15, height = 2, text = 'Snip & Copy Text', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+    fg = bcolor,
+    bg = fcolor,
+    border = 0,
+    activeforeground = fcolor,
+    activebackground = bcolor,
+    command = Snip_copytool)
+
+    def snip_copy_button():
+        def on_enter(e):
+            snip_copy_btn['background'] = bcolor
+            snip_copy_btn['foreground'] = fcolor
+
+        def on_leave(e):
+            if w.get() == 0:
+                snip_copy_btn['background'] = fcolor
+                snip_copy_btn['foreground'] = bcolor
+            if w.get() == 1:
+                snip_copy_btn['background'] = 'ededed'
+                snip_copy_btn['foreground'] = '#303030'
+
+        snip_copy_btn.bind('<Enter>', on_enter)
+        snip_copy_btn.bind('<Leave>', on_leave)
+
+        snip_copy_btn.place(x = 80, y = 10)
+
+    snip_copy_button()
+
+    scan_btn = Button(root, width = 20, height = 2, text = 'Convert image to text', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+    fg = bcolor,
+    bg = fcolor,
+    border = 0,
+    activeforeground = fcolor,
+    activebackground = bcolor,
+    command = scan_upload)
+
+    def scan_button():
+        def on_enter(e):
+            scan_btn['background'] = bcolor
+            scan_btn['foreground'] = fcolor
+
+        def on_leave(e):
+            if w.get() == 0:
+                scan_btn['background'] = fcolor
+                scan_btn['foreground'] = bcolor
+            if w.get() == 1:
+                scan_btn['background'] = 'ededed'
+                scan_btn['foreground'] = '#303030'
+
+        scan_btn.bind('<Enter>', on_enter)
+        scan_btn.bind('<Leave>', on_leave)
+
+        scan_btn.place(x = 180, y = 10)
+
+    scan_button()
+
+    scan_to_search_btn = Button(root, width = 13, height = 2, text = 'Snip and search', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+    fg = bcolor,
+    bg = fcolor,
+    border = 0,
+    activeforeground = fcolor,
+    activebackground = bcolor,
+    command = scan_to_search)
+
+    def scan_search_button():
+        def on_enter(e):
+            scan_to_search_btn['background'] = bcolor
+            scan_to_search_btn['foreground'] = fcolor
+
+        def on_leave(e):
+            if w.get() == 0:
+                scan_to_search_btn['background'] = fcolor
+                scan_to_search_btn['foreground'] = bcolor
+            if w.get() == 1:
+                scan_to_search_btn['background'] = 'ededed'
+                scan_to_search_btn['foreground'] = '#303030'
+
+        scan_to_search_btn.bind('<Enter>', on_enter)
+        scan_to_search_btn.bind('<Leave>', on_leave)
+
+        scan_to_search_btn.place(x = 310, y = 10)
+
+    scan_search_button()
+
+if __name__ == '__main__':
+    main()
+
+mainloop()
+---------------------------------------------------------------------------------
+import cv2
+from tkinter import *
+from PIL import ImageGrab, Image, ImageTk
+import tkinter.font as font
+import sys
+import numpy as np
+import pytesseract
+pytesseract.pytesseract.tesseract_cmd = r"C:\Users\minua\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
+import pyperclip as pc
+from tkinter import filedialog
+from PyQt6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QTextEdit, QVBoxLayout
+from PyQt6.QtGui import QIcon
+from os.path import basename
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QPoint, Qt, QRect
+from PyQt5.QtWidgets import QAction, QMainWindow, QApplication, QPushButton, QMenu, QFileDialog
+from PyQt5.QtGui import QPixmap, QImage, QPainter, QPen
+
+def Snip():
+    class Snip_tool(QtWidgets.QWidget):
+        def __init__(self):
+            super().__init__()
+            screen_width = root.winfo_screenwidth()
+            screen_height = root.winfo_screenheight()
+            self.setGeometry(0,0, screen_width, screen_height)
+            self.begin = QtCore.QPoint()
+            self.end = QtCore.QPoint()
+            self.setWindowOpacity(0.4)
+            QtWidgets.QApplication.setOverrideCursor(
+            QtGui.QCursor(QtCore.Qt.CrossCursor)
+            )
+            self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+            self.show()
+            root.withdraw()
+
+        def paintEvent(self, event):
+            qp = QtGui.QPainter(self)
+            qp.setPen(QtGui.QPen(QtGui.QColor('red'), 2))
+            qp.setBrush(QtGui.QColor(126, 126, 200, 0))
+            qp.drawRect(QtCore.QRect(self.begin, self.end))
+
+        def mousePressEvent(self, event):
+            self.begin = event.pos()
+            self.end = self.begin
+            self.update()
+
+        def mouseMoveEvent(self, event):
+            self.end = event.pos()
+            self.update()
+
+        def mouseReleaseEvent(self, event):
+            self.close()
+
+            x1 = min(self.begin.x(), self.end.x())
+            y1 = min(self.begin.y(), self.end.y())
+            x2 = max(self.begin.x(), self.end.x())
+            y2 = max(self.begin.y(), self.end.y())
+
+            img = ImageGrab.grab(bbox = (x1, y1, x2, y2))
+            img_array = np.array(img)
+            img = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
+
+            cv2.imshow('Captured', img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
+        if __name__ == '__main__':
+            app = QtWidgets.QApplication(sys.argv)
+            window = Snip_tool()
+            window.show()
+            app.aboutToQuit.connect(app.deleteLater)
+            sys.exit(app.exec_())
+
+#---------------------------------------------------------------
+class Snip_copytool(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        screen_width = root.winfo_screenwidth()
+        screen_height = root.winfo_screenheight()
+        self.setGeometry(0,0, screen_width, screen_height)
+        self.begin = QtCore.QPoint()
+        self.end = QtCore.QPoint()
+        self.setWindowOpacity(0.4)
+        QtWidgets.QApplication.setOverrideCursor(
+        QtGui.QCursor(QtCore.Qt.CrossCursor)
+        )
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.show()
+        root.withdraw()
+
+    def paintEvent(self, event):
+        qp = QtGui.QPainter(self)
+        qp.setPen(QtGui.QPen(QtGui.QColor('red'), 2))
+        qp.setBrush(QtGui.QColor(126, 126, 200, 0))
+        qp.drawRect(QtCore.QRect(self.begin, self.end))
+
+    def mousePressEvent(self, event):
+        self.begin = event.pos()
+        self.end = self.begin
+        self.update()
+
+    def mouseMoveEvent(self, event):
+        self.end = event.pos()
+        self.update()
+
+    def mouseReleaseEvent(self, event):
+        self.close()
+
+        x1 = min(self.begin.x(), self.end.x())
+        y1 = min(self.begin.y(), self.end.y())
+        x2 = max(self.begin.x(), self.end.x())
+        y2 = max(self.begin.y(), self.end.y())
+
+        img = ImageGrab.grab(bbox = (x1, y1, x2, y2))
+        img_array = np.array(img)
+        img = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
+
+        text = pytesseract.image_to_string(img)
+        pc.copy(text)
+        print(text)
+
+        if numpy_image is not None and snip_number is not None:
+            self.image = self.convert_numpy_img_to_qpixmap(numpy_image)
+            self.change_and_set_title("Snip #{0}".format(snip_number))
+        else:
+            self.image = QPixmap("background.PNG")
+            self.change_and_set_title(Menu.default_title)
+
+    if __name__ == '__main__':
+        app = QtWidgets.QApplication(sys.argv)
+        window = Snip_copytool()
+        window.show()
+        app.aboutToQuit.connect(app.deleteLater)
+        sys.exit(app.exec_())
+
+#-----------------------------------------------------------------------------------------------
+class scan_upload(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        print('testing')
+        fle = filedialog.askopenfilename(initialdir = 'C:/gui/', title = 'Open File', filetypes = (('text files', '*.txt'), ('HTML Files', '*html'), ('Python files', '*,py'), ('All files', '*.*')))
+        text = pytesseract.image_to_string(fle)
+        pc.copy(text)
+
+
+#-----------------------------------------------------------------------------------------------
+class scan_to_search(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        print('scan_to_search')
+-------------------------------------------------------------------------------------
+  from PyQt5 import QtWidgets
+  import sys
+  class Window(QtWidgets.QDialog):
+      def __init__(self):
+          super().__init__()
+          self.layout = QtWidgets.QHBoxLayout(self)
+          self.btn1 = QtWidgets.QPushButton('Button 1')
+          self.layout.addWidget(self.btn1)
+          self.btn2 = QtWidgets.QPushButton('Button 2')
+          self.layout.addWidget(self.btn2)
+  app = QtWidgets.QApplication(sys.argv)
+  win = Window()
+  win.show()
+  sys.exit(app.exec())
+-------------------------------------------------------------------------------------
+  def main():
+      root = Tk()
+      w = IntVar()
+      w.set(0)
+      photo = PhotoImage(file = 'snipocrlogo.png')
+      root.iconphoto(False, photo)
+      root.title('SnipOCR')
+      root.geometry('400x55')
+      canvas = Canvas(root, width = 451, height = 238, highlightthickness = 0)
+      canvas.grid(columnspan = 100, rowspan = 100)
+      root.resizable(False, False)
+
+      fcolor = '#666666'
+      bcolor = '#ffffff'
+
+      snip_btn = Button(root, width = 10, height = 2, text = 'Snip', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+      fg = bcolor,
+      bg = fcolor,
+      border = 0,
+      activeforeground = fcolor,
+      activebackground = bcolor,
+      command = Snip_tool)
+
+      def snipbutton():
+          def on_enter(e):
+              snip_btn['background'] = bcolor
+              snip_btn['foreground'] = fcolor
+
+          def on_leave(e):
+              if w.get() == 0:
+                  snip_btn['background'] = fcolor
+                  snip_btn['foreground'] = bcolor
+              if w.get() == 1:
+                  snip_btn['background'] = 'ededed'
+                  snip_btn['foreground'] = '#303030'
+
+          snip_btn.bind('<Enter>', on_enter)
+          snip_btn.bind('<Leave>', on_leave)
+
+          snip_btn.place(x = 10, y = 10)
+
+      snipbutton()
+
+      snip_copy_btn = Button(root, width = 15, height = 2, text = 'Snip & Copy Text', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+      fg = bcolor,
+      bg = fcolor,
+      border = 0,
+      activeforeground = fcolor,
+      activebackground = bcolor,
+      command = Snip_copytool)
+
+      def snip_copy_button():
+          def on_enter(e):
+              snip_copy_btn['background'] = bcolor
+              snip_copy_btn['foreground'] = fcolor
+
+          def on_leave(e):
+              if w.get() == 0:
+                  snip_copy_btn['background'] = fcolor
+                  snip_copy_btn['foreground'] = bcolor
+              if w.get() == 1:
+                  snip_copy_btn['background'] = 'ededed'
+                  snip_copy_btn['foreground'] = '#303030'
+
+          snip_copy_btn.bind('<Enter>', on_enter)
+          snip_copy_btn.bind('<Leave>', on_leave)
+
+          snip_copy_btn.place(x = 80, y = 10)
+
+      snip_copy_button()
+
+      scan_btn = Button(root, width = 20, height = 2, text = 'Convert image to text', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+      fg = bcolor,
+      bg = fcolor,
+      border = 0,
+      activeforeground = fcolor,
+      activebackground = bcolor,
+      command = scan_upload)
+
+      def scan_button():
+          def on_enter(e):
+              scan_btn['background'] = bcolor
+              scan_btn['foreground'] = fcolor
+
+          def on_leave(e):
+              if w.get() == 0:
+                  scan_btn['background'] = fcolor
+                  scan_btn['foreground'] = bcolor
+              if w.get() == 1:
+                  scan_btn['background'] = 'ededed'
+                  scan_btn['foreground'] = '#303030'
+
+          scan_btn.bind('<Enter>', on_enter)
+          scan_btn.bind('<Leave>', on_leave)
+
+          scan_btn.place(x = 180, y = 10)
+
+      scan_button()
+
+      scan_to_search_btn = Button(root, width = 13, height = 2, text = 'Snip and search', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+      fg = bcolor,
+      bg = fcolor,
+      border = 0,
+      activeforeground = fcolor,
+      activebackground = bcolor,
+      command = scan_to_search)
+
+      def scan_search_button():
+          def on_enter(e):
+              scan_to_search_btn['background'] = bcolor
+              scan_to_search_btn['foreground'] = fcolor
+
+          def on_leave(e):
+              if w.get() == 0:
+                  scan_to_search_btn['background'] = fcolor
+                  scan_to_search_btn['foreground'] = bcolor
+              if w.get() == 1:
+                  scan_to_search_btn['background'] = 'ededed'
+                  scan_to_search_btn['foreground'] = '#303030'
+
+          scan_to_search_btn.bind('<Enter>', on_enter)
+          scan_to_search_btn.bind('<Leave>', on_leave)
+
+          scan_to_search_btn.place(x = 310, y = 10)
+
+      scan_search_button()
+
+  if __name__ == '__main__':
+      main()
+
+  mainloop()
+-------------------------------------------------------------------------------------
+  class Form(QDialog):
+     def __init__(self, parent=None):
+        super(Form, self).__init__(parent)
+
+        layout = QVBoxLayout()
+        self.b1 = QPushButton("Button1")
+        self.b1.setCheckable(True)
+        self.b1.toggle()
+        self.b1.clicked.connect(lambda:self.whichbtn(self.b1))
+        self.b1.clicked.connect(self.btnstate)
+        layout.addWidget(self.b1)
+
+        self.b2 = QPushButton()
+        self.b2.setIcon(QIcon(QPixmap("python.gif")))
+        self.b2.clicked.connect(lambda:self.whichbtn(self.b2))
+        layout.addWidget(self.b2)
+        self.setLayout(layout)
+        self.b3 = QPushButton("Disabled")
+        self.b3.setEnabled(False)
+        layout.addWidget(self.b3)
+
+        self.b4 = QPushButton("&Default")
+        self.b4.setDefault(True)
+        self.b4.clicked.connect(lambda:self.whichbtn(self.b4))
+        layout.addWidget(self.b4)
+
+        self.setWindowTitle("Button demo")
+
+     def btnstate(self):
+        if self.b1.isChecked():
+           print('button pressed')
+        else:
+           print('button released')
+
+     def whichbtn(self,b):
+        print('clicked button is ') +b.text()
+
+  def main():
+     app = QApplication(sys.argv)
+     ex = Form()
+     ex.show()
+     sys.exit(app.exec_())
+
+  if __name__ == '__main__':
+     main()
+-------------------------------------------------------------------------------------
+     if img_array is not None and snip_number is not None:
+             self.image = self.convert_numpy_img_to_qpixmap(numpy_image)
+             self.change_and_set_title("Snip #{0}".format(snip_number))
+         else:
+             self.image = QPixmap("background.PNG")
+             self.change_and_set_title(Menu.default_title)
+---------------------------------------------------------------------------------
+import sys
+from PyQt5.QtCore import QPoint, Qt, QRect
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QMainWindow
+from PyQt5.QtGui import QImage
+import SnipOCR
+
+app = QApplication(sys.argv)
+
+class Window(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setGeometry(0 ,0 , 450, 70)
+        self.setWindowTitle('SnipOCR')
+
+        layout = QHBoxLayout()
+        snip_btn = QPushButton(self)
+        snip_btn.move(10, 10)
+        snip_btn.setText('Snip')
+        snip_btn.resize(80,50)
+        layout.addWidget(snip_btn)
+        snip_btn.clicked.connect(SnipOCR.Snip_tool)
+
+        #snipcopy_btn = QPushButton(window)
+        #snipcopy_btn.move(110, 10)
+        #snipcopy_btn.setText('Snip and Copy Text')
+        #snipcopy_btn.resize(130,50)
+        #layout.addWidget(snipcopy_btn)
+        self.show()
+        #closes the application with the 'x' button
+        sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    Window()
+    ---------------------------------------------------------------------------------
+    screen = app.primaryScreen()
+        print('Screen: %s' % screen.name())
+        size = screen.size()
+        print('Size: %d x %d' % (size.width(), size.height()))
+        rect = screen.availableGeometry()
+        print('Available: %d x %d' % (rect.width(), rect.height()))
+
+        self.height = rect.height()
+        self.width = rect.width()
+---------------------------------------------------------------------------------
+from tkinter import *
+import SnipOCR
+import tkinter.font as font
+
+root = Tk()
+root.geometry('451x151')
+root.title('SnipOCR')
+
+w = IntVar()
+w.set(0)
+fcolor = '#666666'
+bcolor = '#ffffff'
+
+snip_btn = Button(root, width = 10, height = 2, text = 'Snip', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+fg = bcolor,
+bg = fcolor,
+border = 0,
+activeforeground = fcolor,
+activebackground = bcolor,
+command = SnipOCR.Snip_tool)
+
+def snipbutton():
+    def on_enter(e):
+        snip_btn['background'] = bcolor
+        snip_btn['foreground'] = fcolor
+
+    def on_leave(e):
+        if w.get() == 0:
+            snip_btn['background'] = fcolor
+            snip_btn['foreground'] = bcolor
+        if w.get() == 1:
+            snip_btn['background'] = 'ededed'
+            snip_btn['foreground'] = '#303030'
+
+    snip_btn.bind('<Enter>', on_enter)
+    snip_btn.bind('<Leave>', on_leave)
+
+    snip_btn.place(x = 10, y = 10)
+
+snipbutton()
+
+mainloop()
+--------------------------------------------------------
+import sys
+from PyQt5.QtCore import QPoint, Qt, QRect
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QMainWindow
+from PyQt5.QtGui import QImage
+import SnipOCR
+
+app = QApplication(sys.argv)
+
+class Window(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setGeometry(0 ,0 , 450, 70)
+        self.setWindowTitle('SnipOCR')
+
+        layout = QHBoxLayout()
+        snip_btn = QPushButton(self)
+        snip_btn.move(10, 10)
+        snip_btn.setText('Snip')
+        snip_btn.resize(80,50)
+        layout.addWidget(snip_btn)
+        snip_btn.clicked.connect(SnipOCR.Snip_tool)
+
+        #snipcopy_btn = QPushButton(window)
+        #snipcopy_btn.move(110, 10)
+        #snipcopy_btn.setText('Snip and Copy Text')
+        #snipcopy_btn.resize(130,50)
+        #layout.addWidget(snipcopy_btn)
+        self.show()
+        #closes the application with the 'x' button
+        sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    Window()
