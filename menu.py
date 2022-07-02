@@ -18,6 +18,7 @@ class Window(QMainWindow):
         snip_btn.setText('Snip')
         snip_btn.resize(80,50)
         layout.addWidget(snip_btn)
+        self.SnippingTool = SnipOCR.Sn
         snip_btn.clicked.connect(SnipOCR.Snip_tool)
 
         #snipcopy_btn = QPushButton(window)
@@ -30,4 +31,6 @@ class Window(QMainWindow):
         sys.exit(app.exec_())
 
 if __name__ == '__main__':
-    Window()
+    window = Window()
+    window.show()
+    sys.exit(app.exec_())
