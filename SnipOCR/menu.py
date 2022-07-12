@@ -4,8 +4,6 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QMa
 from PyQt5.QtGui import QImage
 import SnipOCR
 
-app = QApplication(sys.argv)
-
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -31,6 +29,7 @@ class Window(QMainWindow):
         sys.exit(app.exec_())
 
 if __name__ == '__main__':
+    app = QApplication(sys.argv)
     window = Window()
     window.show()
     sys.exit(app.exec_())
