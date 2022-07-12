@@ -1,3 +1,3 @@
 # blou
 
- A mobile cloud space for blou's software development
+ A mobile cloud space for blou's software development & code
