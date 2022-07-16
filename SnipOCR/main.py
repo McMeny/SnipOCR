@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtCore import QPoint, Qt, QRect
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QMainWindow
 from PyQt5.QtGui import QImage
-from engine import Snip_tool
+import engine
 
 class Window(QMainWindow):
     def __init__(self):
@@ -16,7 +16,17 @@ class Window(QMainWindow):
         snip_btn.setText('Snip')
         snip_btn.resize(80,50)
         layout.addWidget(snip_btn)
-        snip_btn.clicked.connect(Snip_tool)
+        self.Snip_tool = engine.Snip_tool()
+
+        new_snip = QAction('New', self)
+        new_snip.setStatusTip('Snip')
+        new_snip.clicked.connect(self.new_img_window)
+
+        def new_img_window(self):
+            if self.Snip_tool.background:
+                self.close()
+            self.Snip_tool.start()
+
         #snipcopy_btn = QPushButton(window)
         #snipcopy_btn.move(110, 10)
         #snipcopy_btn.setText('Snip and Copy Text')
