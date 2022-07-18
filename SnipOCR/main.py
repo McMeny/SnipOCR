@@ -1,41 +1,46 @@
-import sys
-from PyQt5.QtCore import QPoint, Qt, QRect
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QMainWindow
-from PyQt5.QtGui import QImage
-import engine
+from tkinter import *
+import tkinter.font as font
 
-class Window(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setGeometry(0 ,0 , 450, 70)
-        self.setWindowTitle('SnipOCR')
+root = Tk()
+root.title('SnipOCR')
+root.geometry('400x50')
+root.resizable(False, False)
 
-        layout = QHBoxLayout()
-        snip_btn = QPushButton(self)
-        snip_btn.move(10, 10)
-        snip_btn.setText('Snip')
-        snip_btn.resize(80,50)
-        layout.addWidget(snip_btn)
-        self.Snip_tool = engine.Snip_tool()
+#variables
+fcolor = '#666666'
+bcolor = '#ffffff'
+w = IntVar()
+w.set(0)
 
-        new_snip = QAction('New', self)
-        new_snip.setStatusTip('Snip')
-        new_snip.clicked.connect(self.new_img_window)
+bottom_text = Label(text = 'Blou, 2022', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0)
+bottom_text.place(x = 160, y = 35)
 
-        def new_img_window(self):
-            if self.Snip_tool.background:
-                self.close()
-            self.Snip_tool.start()
+snip_btn = Button(root, width = 10, height = 2, text = 'Snip', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+fg = bcolor,
+bg = fcolor,
+border = 0,
+activeforeground = fcolor,
+activebackground = bcolor)
 
-        #snipcopy_btn = QPushButton(window)
-        #snipcopy_btn.move(110, 10)
-        #snipcopy_btn.setText('Snip and Copy Text')
-        #snipcopy_btn.resize(130,50)
-        #layout.addWidget(snipcopy_btn)
-        #closes the application with the 'x' button
+def snipbutton():
+    def on_enter(e):
+        snip_btn['background'] = bcolor
+        snip_btn['foreground'] = fcolor
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    window = Window()
-    window.show()
-    sys.exit(app.exec_())
+    def on_leave(e):
+        if w.get() == 0:
+            snip_btn['background'] = fcolor
+            snip_btn['foreground'] = bcolor
+        if w.get() == 1:
+            snip_btn['background'] = 'ededed'
+            snip_btn['foreground'] = '#303030'
+
+    snip_btn.bind('<Enter>', on_enter)
+    snip_btn.bind('<Leave>', on_leave)
+
+    snip_btn.place(x = 10, y = 10)
+
+snipbutton()
+
+
+mainloop()

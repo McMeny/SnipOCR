@@ -1,50 +1,24 @@
-import cv2
-from tkinter import *
-import numpy as np
-from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QFileDialog
-from PyQt5.QtCore import QPoint, Qt, QRect
-from PyQt5 import QtCore, QtGui, QtWidgets
-import sys
-from PIL import ImageGrab
-
-class Snip_tool(QtWidgets.QWidget):
-    isSnipping = False
-    background = True
+class Snip_copytool(QtWidgets.QWidget):
     def __init__(self):
-        super(Snip_tool, self).__init__()
-
-        root = Tk()
+        super().__init__()
         screen_width = root.winfo_screenwidth()
         screen_height = root.winfo_screenheight()
-        self.setGeometry(0, 0, screen_width, screen_height)
+        self.setGeometry(0,0, screen_width, screen_height)
         self.begin = QtCore.QPoint()
         self.end = QtCore.QPoint()
-
-    def start(self):
-        Snip_tool.isSnipping = True
-        self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setWindowOpacity(0.4)
-        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
+        QtWidgets.QApplication.setOverrideCursor(
+        QtGui.QCursor(QtCore.Qt.CrossCursor)
+        )
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.show()
+        root.withdraw()
 
-    def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Q:
-            print('Quit')
-            self.close
-        event.accept()
-
-        if Snip_tool.isSnipping:
-            def paintEvent(self, event):
-                qp = QtGui.QPainter(self)
-                qp.setPen(QtGui.QPen(QtGui.QColor('red'), 2))
-                qp.setBrush(QtGui.QColor(126, 126, 200, 0))
-                qp.drawRect(QtCore.QRect(self.begin, self.end))
-        else:
-            self.begin = QtCore.QPoint()
-            self.end = QtCore.QPoint()
-            qp.setBrush(QtGui.QColor(0, 0, 0, 0))
-            self.setWindowOpacity(0)
+    def paintEvent(self, event):
+        qp = QtGui.QPainter(self)
+        qp.setPen(QtGui.QPen(QtGui.QColor('red'), 2))
+        qp.setBrush(QtGui.QColor(126, 126, 200, 0))
+        qp.drawRect(QtCore.QRect(self.begin, self.end))
 
     def mousePressEvent(self, event):
         self.begin = event.pos()
@@ -67,13 +41,20 @@ class Snip_tool(QtWidgets.QWidget):
         img_array = np.array(img)
         img = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
 
-        cv2.imshow('Captured', img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        text = pytesseract.image_to_string(img)
+        pc.copy(text)
+        print(text)
 
-if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    window = Snip_tool()
-    window.show()
-    app.aboutToQuit.connect(app.deleteLater)
-    sys.exit(app.exec_())
+        if numpy_image is not None and snip_number is not None:
+            self.image = self.convert_numpy_img_to_qpixmap(numpy_image)
+            self.change_and_set_title("Snip #{0}".format(snip_number))
+        else:
+            self.image = QPixmap("background.PNG")
+            self.change_and_set_title(Menu.default_title)
+
+    if __name__ == '__main__':
+        app = QtWidgets.QApplication(sys.argv)
+        window = Snip_copytool()
+        window.show()
+        app.aboutToQuit.connect(app.deleteLater)
+        sys.exit(app.exec_())
