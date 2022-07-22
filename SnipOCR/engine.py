@@ -1,60 +1,82 @@
-class Snip_copytool(QtWidgets.QWidget):
-    def __init__(self):
-        super().__init__()
-        screen_width = root.winfo_screenwidth()
-        screen_height = root.winfo_screenheight()
-        self.setGeometry(0,0, screen_width, screen_height)
-        self.begin = QtCore.QPoint()
-        self.end = QtCore.QPoint()
-        self.setWindowOpacity(0.4)
-        QtWidgets.QApplication.setOverrideCursor(
-        QtGui.QCursor(QtCore.Qt.CrossCursor)
-        )
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        self.show()
-        root.withdraw()
+from logging import root
+import cv2
+from tkinter import *
+from PIL import ImageGrab, Image, ImageTk
+import sys
+import numpy as np
+import pytesseract
+pytesseract.pytesseract.tesseract_cmd = r"C:\Users\minua\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
+import pyautogui
+import keyboard
 
-    def paintEvent(self, event):
-        qp = QtGui.QPainter(self)
-        qp.setPen(QtGui.QPen(QtGui.QColor('red'), 2))
-        qp.setBrush(QtGui.QColor(126, 126, 200, 0))
-        qp.drawRect(QtCore.QRect(self.begin, self.end))
+def Snip_tool():
+    #screenshot = pyautogui.screenshot()
+    #img_array = np.array(screenshot)
+    #image = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+    #cv2.imshow('image', image)
+    #print('screenshot taken')
+    #img = ImageTk.PhotoImage(image=Image.fromarray(img_array))
 
-    def mousePressEvent(self, event):
-        self.begin = event.pos()
-        self.end = self.begin
-        self.update()
+    #root = Tk()
+    #screen_width = root.winfo_screenwidth()
+    #screen_height = root.winfo_screenheight()
+    #root.geometry(f'{screen_width}x{screen_height}')
+    #canvas = Canvas(root, width = screen_width, height = screen_height)
+    #canvas.pack()
+    #canvas.create_image(20, 20, anchor = 'nw', image = img)
 
-    def mouseMoveEvent(self, event):
-        self.end = event.pos()
-        self.update()
+    root = Tk()
+    global n, coords
+    n=0
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    root.geometry(f'{screen_width}x{screen_height}')
+    root.attributes("-alpha", 0.5)
+    root.overrideredirect(True)
+    canvas = Canvas(root, width = screen_width, height = screen_height)
+    canvas.pack()
 
-    def mouseReleaseEvent(self, event):
-        self.close()
+    x1=y1=coords=None
 
-        x1 = min(self.begin.x(), self.end.x())
-        y1 = min(self.begin.y(), self.end.y())
-        x2 = max(self.begin.x(), self.end.x())
-        y2 = max(self.begin.y(), self.end.y())
+    def key_press(e):
+        root.destroy()
+    def key_release(e):
+        root.destroy()
 
-        img = ImageGrab.grab(bbox = (x1, y1, x2, y2))
-        img_array = np.array(img)
-        img = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
+    root.bind('<Key>', key_press)
+    root.bind('<KeyRelease>', key_release)
 
-        text = pytesseract.image_to_string(img)
-        pc.copy(text)
-        print(text)
+    def cur_press_event(event):
+        global n,coords,a
+        if n==0:
+            n+=1
+            coords=event.x,event.y
+        elif n==1:
+            n+=1
+            a=canvas.create_rectangle(coords[0],coords[1],event.x,event.y, fill = 'purple')
 
-        if numpy_image is not None and snip_number is not None:
-            self.image = self.convert_numpy_img_to_qpixmap(numpy_image)
-            self.change_and_set_title("Snip #{0}".format(snip_number))
         else:
-            self.image = QPixmap("background.PNG")
-            self.change_and_set_title(Menu.default_title)
+            canvas.coords(a, coords[0] ,coords[1], event.x, event.y)
 
-    if __name__ == '__main__':
-        app = QtWidgets.QApplication(sys.argv)
-        window = Snip_copytool()
-        window.show()
-        app.aboutToQuit.connect(app.deleteLater)
-        sys.exit(app.exec_())
+    def setn(event):
+        global n,x1,y1,coords
+        n=0
+        x1,y1 = event.x, event.y
+        if coords is not None:
+            print(*coords)
+            print(x1,y1)
+
+            root.withdraw()
+
+            img = ImageGrab.grab(bbox= (coords[0],coords[1],x1, y1))
+            img_array = np.array(img)
+            print(type(img_array))
+            image = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+
+            win = cv2.namedWindow('Snip Window')
+            cv2.imshow('Snip Window', image)
+            cv2.createButton('Snip', Snip_tool, None, cv2.QT_PUSH_BUTTON,1)
+        x1=y1=coords=None
+
+    root.bind('<B1-Motion>', cur_press_event)
+    root.bind('<ButtonRelease-1>',setn)

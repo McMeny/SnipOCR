@@ -334,7 +334,6 @@ class scan_upload(QtWidgets.QWidget):
         text = pytesseract.image_to_string(fle)
         pc.copy(text)
 
-
 #-----------------------------------------------------------------------------------------------
 class scan_to_search(QtWidgets.QWidget):
     def __init__(self):

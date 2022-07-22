@@ -1,5 +1,7 @@
 from tkinter import *
 import tkinter.font as font
+from engine import Snip_tool
+import time
 
 root = Tk()
 root.title('SnipOCR')
@@ -16,13 +18,15 @@ bottom_text = Label(text = 'Blou, 2022', font = font.Font(family = 'MS Shell Dlg
 bottom_text.place(x = 160, y = 35)
 
 snip_btn = Button(root, width = 10, height = 2, text = 'Snip', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
-fg = bcolor,
-bg = fcolor,
-border = 0,
-activeforeground = fcolor,
-activebackground = bcolor)
+    fg = bcolor,
+    bg = fcolor,
+    border = 0,
+    activeforeground = fcolor,
+    activebackground = bcolor,
+    command = Snip_tool)
 
 def snipbutton():
+
     def on_enter(e):
         snip_btn['background'] = bcolor
         snip_btn['foreground'] = fcolor
@@ -35,12 +39,15 @@ def snipbutton():
             snip_btn['background'] = 'ededed'
             snip_btn['foreground'] = '#303030'
 
+    def on_release_event(e):
+        root.withdraw()
+
     snip_btn.bind('<Enter>', on_enter)
     snip_btn.bind('<Leave>', on_leave)
+    snip_btn.bind('<ButtonRelease-1>', on_release_event)
 
-    snip_btn.place(x = 10, y = 10)
+snip_btn.place(x = 10, y = 10)
 
 snipbutton()
-
 
 mainloop()
