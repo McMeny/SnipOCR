@@ -1,15 +1,29 @@
 from logging import root
 import cv2
 from tkinter import *
-from PIL import ImageGrab, Image, ImageTk
-import sys
+from PIL import ImageGrab
+from cv2 import destroyAllWindows
 import numpy as np
 import pytesseract
 pytesseract.pytesseract.tesseract_cmd = r"C:\Users\minua\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
-import struct
-import array
+import pyperclip as pc
+import pyautogui
+from tkinter import messagebox
+from tkinter import filedialog as fd
+import time
+from pynput import keyboard
 
 def Snip_tool():
+    time.sleep(0.12)
+
+    bk_screenshot = pyautogui.screenshot()
+    bk_array = np.array(bk_screenshot)
+    bk_img = cv2.cvtColor(bk_array, cv2.COLOR_BGR2RGB)
+
+    win = cv2.namedWindow('background', cv2.WND_PROP_FULLSCREEN)
+    cv2.setWindowProperty("background", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+    cv2.imshow('background', bk_img)
+
     root = Tk()
     global n, coords
     n=0
@@ -48,33 +62,51 @@ def Snip_tool():
         n=0
         x1,y1 = event.x, event.y
         if coords is not None:
-
             root.withdraw()
-            
-            
-        def photo_image(image: np.ndarray):
-            height, width = img_array.shape[:2]
-            header = f'P6 {width} {height} 255'.encode()
-            img_data = header + cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR).tobytes()
-            img_struct = struct.unpack('f', img_data)
-            return PhotoImage(width = width, height = height, data = img_struct, format = 'PPM')
 
             
         imggrab = ImageGrab.grab(bbox= (coords[0],coords[1],x1, y1))
         img_array = np.array(imggrab)
-        img_shape = img_array.shape[:2]
-        img = photo_image(img_array)
+        img = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
 
-        img_canvas = Canvas(root, width = 300, height = 300)
-        img_canvas.pack()
-        img_canvas.create_image(img_shape[0], img_shape[1], anchor = 'nw', image = img)
+        cv2.destroyAllWindows()
 
-            #win = cv2.namedWindow('Snip Window')
-            #cv2.imshow('Snip Window', image)
+        win = cv2.namedWindow('Capture')
+        cv2.imshow('Capture', img)
         x1=y1=coords=None
+
+        text = pytesseract.image_to_string(img)
+        pc.copy(text)
+        print(text)
+        if text:
+            question = messagebox.askyesnocancel('Notification', 'Text successfully copied to clipboard. Would you like to save the image?')
+            if question:
+                tst = fd.asksaveasfilename(filetypes = [('png files', '.png')])
+                if tst: #tst could be None!
+                    cv2.imwrite(tst, img)
+                
+        else:
+            messagebox.showerror('Error', 'The application was not able to copy the text to clipboard. Please try again.')
+
 
     root.bind('<B1-Motion>', cur_press_event)
     root.bind('<ButtonRelease-1>',setn)
+#-----------------------------------------------------------------------------
+def Scan_upload():
+    fle = fd.askopenfilename(filetypes = [
+        ('text files', '*.txt'),
+        ('HTML Files', '*html'),
+        ('Python files', '*,py'),
+        ('PDF files', '*,pdf'),
+        ('All files', '*.*')
+        ])
+
+    if fle is not None:
+        question = messagebox.showinfo('Notification', 'Text successfully copied to clipboard.')
+        text = pytesseract.image_to_string(fle)
+        pc.copy(text)
+    if fle is None:
+        messagebox.showerror('Error', 'This document has unreadable text. Please try again.')
 #-----------------------------------------------------------------------------
     #def paint_event(event):
     #    global p,paint_coords
