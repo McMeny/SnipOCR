@@ -68,25 +68,24 @@ def Snip_tool():
     cv2.setWindowProperty("background", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     cv2.imshow('background', bk_img)
 
-    root = Tk()
-    global n, coords, overlay_scrn
+    global n, coords
     n=0
+    root = Tk()
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     root.geometry(f'{screen_width}x{screen_height}')
-    overlay_scrn = root.attributes("-alpha", 0.5)
+    root.attributes("-alpha", 0.5)
     root.overrideredirect(True)
     canvas = Canvas(root, width = screen_width, height = screen_height)
     canvas.pack()
 
     x1=y1=coords=None
 
-    def key_press(e):
-        root.destroy()
+    #def key_press(e):
+    #    root.destroy()
     def key_release(e):
         root.destroy()
 
-    root.bind('<Key>', key_press)
     root.bind('<KeyRelease>', key_release)
 
     def cur_press_event(event):
@@ -104,8 +103,9 @@ def Snip_tool():
         global n,x1,y1,coords
         n=0
         x1,y1 = event.x, event.y
-        if coords is not None:
+        if coords:
             root.withdraw()
+
 
         imggrab = ImageGrab.grab(bbox= (coords[0],coords[1],x1, y1))
         img_array = np.array(imggrab)
