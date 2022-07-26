@@ -1,10 +1,11 @@
 from tkinter import *
 import tkinter.font as font
-from engine import Snip_tool, Scan_upload, Settings
+from engine import Snip_tool, Scan_upload
+from tkinter import PhotoImage
 
 root = Tk()
 root.title('SnipOCR')
-root.geometry('280x60')
+root.geometry('198x60')
 root.resizable(False, False)
 
 #variables
@@ -16,7 +17,7 @@ a = IntVar()
 a.set(0)
 
 bottom_text = Label(text = 'Blou, 2022', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0)
-bottom_text.place(x = 100, y = 42)
+bottom_text.pack(anchor = 'sw', side = 'left', padx = 5)
 
 snip_btn = Button(root, width = 12, height = 2, text = 'Image to text', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
     fg = bcolor,
@@ -40,18 +41,15 @@ def snipbutton():
             snip_btn['background'] = 'ededed'
             snip_btn['foreground'] = '#303030'
 
-    def on_release_event(e):
-        root.withdraw()
-
     snip_btn.bind('<Enter>', on_enter)
     snip_btn.bind('<Leave>', on_leave)
-    snip_btn.bind('<ButtonRelease-1>', on_release_event)
+
 
 snip_btn.place(x = 10, y = 10)
 
 snipbutton()
 
-fileupload_btn = Button(root, width = 12, height = 2, text = 'scan file to text', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+fileupload_btn = Button(root, width = 13, height = 2, text = 'scan file to text', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
     fg = bcolor,
     bg = fcolor,
     border = 0,
@@ -78,33 +76,5 @@ def file_uploadbutton():
 fileupload_btn.place(x = 100, y = 10)
 
 file_uploadbutton()
-
-settings_btn = Button(root, width = 12, height = 2, text = 'Settings', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
-    fg = bcolor,
-    bg = fcolor,
-    border = 0,
-    activeforeground = fcolor,
-    activebackground = bcolor,
-    command = Settings)
-
-def settingsbutton():
-    def on_enter(e):
-        settings_btn['background'] = bcolor
-        settings_btn['foreground'] = fcolor
-
-    def on_leave(e):
-        if a.get() == 0:
-            settings_btn['background'] = fcolor
-            settings_btn['foreground'] = bcolor
-        if a.get() == 1:
-            settings_btn['background'] = 'ededed'
-            settings_btn['foreground'] = '#303030'
-
-    settings_btn.bind('<Enter>', on_enter)
-    settings_btn.bind('<Leave>', on_leave)
-
-settings_btn.place(x = 190, y = 10)
-
-settingsbutton()
 
 mainloop()
