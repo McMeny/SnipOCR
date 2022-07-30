@@ -78,4 +78,4 @@ async def translation(message):
             ctx = await bot.get_context(message)
             await ctx.send(final_txt.text)
 
-bot.run('ODk5NjgyMzg1OTU4OTYxMjAz.YW2UhA.7KqXJzyMeLv34s_UZ4CHqZPPmZ8')
+bot.run()
