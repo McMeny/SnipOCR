@@ -1,11 +1,11 @@
 from tkinter import *
 import tkinter.font as font
-from engine import Snip_tool, Scan_upload
+from engine import Snip_tool, Scan_upload, text_search
 from tkinter import PhotoImage
 
 root = Tk()
 root.title('SnipOCR')
-root.geometry('198x60')
+root.geometry('300x60')
 root.resizable(False, False)
 
 #variables
@@ -26,6 +26,7 @@ snip_btn = Button(root, width = 12, height = 2, text = 'Image to text', font = f
     activeforeground = fcolor,
     activebackground = bcolor,
     command = Snip_tool)
+
 
 def snipbutton():
 
@@ -76,5 +77,35 @@ def file_uploadbutton():
 fileupload_btn.place(x = 100, y = 10)
 
 file_uploadbutton()
+
+search_btn = Button(root, width = 13, height = 2, text = 'Image to search', font = font.Font(family = 'MS Shell Dlg 2', size = 8), borderwidth = 0,
+    fg = bcolor,
+    bg = fcolor,
+    border = 0,
+    activeforeground = fcolor,
+    activebackground = bcolor,
+    command = text_search)
+
+def searchbutton():
+
+    def on_enter(e):
+        search_btn['background'] = bcolor
+        search_btn['foreground'] = fcolor
+
+    def on_leave(e):
+        if w.get() == 0:
+            search_btn['background'] = fcolor
+            search_btn['foreground'] = bcolor
+        if w.get() == 1:
+            search_btn['background'] = 'ededed'
+            search_btn['foreground'] = '#303030'
+
+    search_btn.bind('<Enter>', on_enter)
+    search_btn.bind('<Leave>', on_leave)
+
+
+search_btn.place(x = 200, y = 10)
+
+searchbutton()
 
 mainloop()
